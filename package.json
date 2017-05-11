@@ -1,0 +1,22 @@
+{
+  "name": "kungfu",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mientjan/kungfu.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mientjan/kungfu/issues"
+  },
+  "homepage": "https://github.com/mientjan/kungfu#readme",
+  "dependencies": {
+    "seng-signals": "^1.1.4"
+  }
+}
