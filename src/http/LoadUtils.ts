@@ -19,13 +19,3 @@ export function loadAudio(src:string):Promise<ArrayBuffer>
 {
 	return HTTPRequest.getArrayBuffer(src);
 }
-
-export function loadToneJSAudio(src:string):Promise<AudioBuffer>
-{
-	return new Promise((resolve:(result:AudioBuffer) => any, reject) => {
-		let buffer:Tone.Buffer;
-		buffer = new Tone.Buffer(src, () => {
-			resolve(buffer.get());
-		}, reject);
-	});
-}
