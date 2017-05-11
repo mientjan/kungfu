@@ -1,8 +1,8 @@
 
-import {deferred, IDeffered} from "../PromiseUtils";
 import FileType from "./FileType";
 import LoadStatus from "./LoadStatus";
 import {loadAudio, loadImage} from "./LoadUtils";
+import {default as deferred, IDeffered} from "../promise/deferred";
 
 export default class Load<T extends any>
 {

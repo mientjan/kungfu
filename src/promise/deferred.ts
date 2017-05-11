@@ -4,7 +4,7 @@ export interface IDeffered<T> {
 	promise:Promise<T>;
 }
 
-export function deferred<T>():IDeffered<T>
+export default function deferred<T>():IDeffered<T>
 {
 
 	let obj = {
