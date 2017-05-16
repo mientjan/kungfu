@@ -18,5 +18,8 @@
   "homepage": "https://github.com/mientjan/kungfu#readme",
   "dependencies": {
     "seng-signals": "^1.1.4"
+  },
+  "devDependencies": {
+    "lerna": "^2.0.0-rc.4"
   }
 }
