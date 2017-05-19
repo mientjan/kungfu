@@ -6,17 +6,11 @@ import {default as deferred, IDeffered} from "../promise/deferred";
 
 export default class Load<T extends any>
 {
-	/**
-	 *
-	 * @param load
-	 * @param progress
-	 * @returns {Promise<TAll[]>}
-	 */
-	public static all<U>(load:Array<Load<U>|Promise<U>>, progress:(progress:number) => void):Promise<Array<U>>
+	public static all<U>(load:Array<Promise<U>>, progress:(progress:number) => void):Promise<Array<U>>
 	{
 		let totalProgress = Array(load.length).fill(0);
 
-		let list:Array<any> = load.map((val, index) => {
+		let list:Array<any> = load.map((val:any, index) => {
 
 			let method = data => {
 				totalProgress[index] = 1;
@@ -28,6 +22,31 @@ export default class Load<T extends any>
 		});
 
 		return Promise.all(list);
+	}
+
+	public static sequence<U>(load:Array<(resolve) => any>, progress:(progress:number) => void):Promise<Array<U>>
+	{
+		let totalProgress = Array(load.length).fill(0);
+		let result = [];
+
+		let prom = new Promise(load.shift());
+
+		load.forEach((loadItem, index) => {
+			prom = prom.then(item => {
+				result.push(item);
+
+				totalProgress[index] = 1;
+				progress(totalProgress.reduce((acc, curr) => acc + curr, 0) / load.length);
+
+				return new Promise(loadItem);
+			})
+		})
+
+		return prom.then(item => {
+			result.push(item);
+
+			return result;
+		});
 	}
 
 	public readonly src:string;

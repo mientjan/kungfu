@@ -1,57 +1,66 @@
-import {Signal1, SignalConnection} from 'seng-signals'
+import {Signal2, SignalConnection} from 'seng-signals'
 
-export default class Raf {
+let time = 0;
+let raf = -1;
+let signals:Array<Signal2<number, number>> = [];
+let length = signals.length;
+let delta = 0;
+let tick = (currTime) => {
+	raf = requestAnimationFrame(tick);
+	delta = currTime - time;
+	time = currTime;
 
-	private static _signal = new Signal1<number>();
-	private static _raf = -1;
-
-	private static tick = (time) => {
-		Raf._raf = requestAnimationFrame(Raf.tick);
-		Raf._signal.emit(time);
-	}
-
-	protected static _connections:Array<SignalConnection> = [];
-
-	public static connect(fn:any):SignalConnection
+	for (var i = 0; i < length; i++)
 	{
-		let connection = Raf._signal.connect(fn);
-		this._connections.push(connection);
-
-		let dispose = connection.dispose;
-		connection.dispose = () => {
-			dispose.call(connection);
-			Raf.stop();
-		}
-
-		Raf.start();
-
-		return connection;
+		signals[i].emit(time, delta)
 	}
+}
+
+export default class Raf extends Signal2<number, number> {
 
 	protected static start(){
-		if(Raf._raf == -1 && Raf._signal.hasListeners())
+		if(raf == -1 && length > 0)
 		{
-			Raf._raf = requestAnimationFrame(Raf.tick);
+			raf = requestAnimationFrame(tick);
 		}
 	}
 
 	protected static stop(){
 
-		if(Raf._raf > -1 && !Raf._signal.hasListeners())
+		if(raf > -1 && length == 0)
 		{
-			cancelAnimationFrame(Raf._raf);
-			Raf._raf = -1;
+			cancelAnimationFrame(raf);
+			raf = -1;
 		}
 	}
 
-	protected static destruct():void
+	public connect (listener: Function, prioritize?: boolean): SignalConnection
 	{
-		this.disconnectAll();
-
-		if(Raf._raf > -1 && !Raf._signal.hasListeners())
+		if(!this.hasListeners())
 		{
-			this.stop();
+			signals.push(this);
+			length = signals.length;
 		}
+
+		return super.connect(listener, prioritize);
 	}
 
+	public disconnect (conn: SignalConnection): void
+	{
+		super.disconnect(conn);
+
+		if(!this.hasListeners())
+		{
+			for (var i = 0; i < length; i++)
+			{
+				if(signals[i] === this)
+				{
+					signals.splice(i, 1)
+				}
+			}
+
+			length = signals.length;
+		}
+
+	}
 }
