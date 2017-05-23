@@ -8,7 +8,10 @@ import sum from "../math/sum";
  * @param {Number} bandWidth
  * @returns {Promise<Array<U>>}
  */
-export default function stream<U> (load: Array<(resolve, reject?) => any>, progress: (progress: number) => void, bandWidth = 10): Promise<Array<U>>
+export default function stream<U> (
+	load: Array<(resolve:(result:U) => any, reject?) => any>,
+	progress: (progress: number, result:U, index:number) => void = () => {},
+	bandWidth = 10): Promise<Array<U>>
 {
 	let loadClone = load.concat([]);
 	let totalProgress = Array(loadClone.length).fill(0);
@@ -31,7 +34,7 @@ export default function stream<U> (load: Array<(resolve, reject?) => any>, progr
 				result[index] = data;
 				done++;
 				totalProgress[index] = 1;
-				progress(sum.apply(null, totalProgress) / totalProgress.length);
+				progress(sum.apply(null, totalProgress) / totalProgress.length, data, index);
 				next();
 			}, err =>
 			{

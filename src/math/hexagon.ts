@@ -574,8 +574,6 @@ export class Grid {
 		var cp0 = Grid.getHexagonSpiralShapeByLength(size0);
 		var cp1 = Grid.getHexagonSpiralShapeByLength(size1);
 
-		console.log(cp0.length, cp1.length);
-
 
 		var cp2 = [];
 		var offset = Grid.evenRToCube(new Hex(-1, 0));
