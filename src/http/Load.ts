@@ -6,50 +6,9 @@ import {default as deferred, IDeffered} from "../promise/deferred";
 
 export default class Load<T extends any>
 {
-	public static all<U>(load:Array<Promise<U>>, progress:(progress:number) => void):Promise<Array<U>>
-	{
-		let totalProgress = Array(load.length).fill(0);
-
-		let list:Array<any> = load.map((val:any, index) => {
-
-			let method = data => {
-				totalProgress[index] = 1;
-				progress(totalProgress.reduce((acc, curr) => acc + curr, 0) / load.length);
-				return data;
-			};
-
-			return val.then( <any> method);
-		});
-
-		return Promise.all(list);
-	}
-
-	public static sequence<U>(load:Array<(resolve) => any>, progress:(progress:number) => void):Promise<Array<U>>
-	{
-		let totalProgress = Array(load.length).fill(0);
-		let result = [];
-
-		let prom = new Promise(load.shift());
-
-		load.forEach((loadItem, index) => {
-			prom = prom.then(item => {
-				result.push(item);
-
-				totalProgress[index] = 1;
-				progress(totalProgress.reduce((acc, curr) => acc + curr, 0) / load.length);
-
-				return new Promise(loadItem);
-			})
-		})
-
-		return prom.then(item => {
-			result.push(item);
-
-			return result;
-		});
-	}
-
 	public readonly src:string;
+	public readonly type:string;
+
 	public get status():LoadStatus
 	{
 		return this._status;
@@ -62,10 +21,11 @@ export default class Load<T extends any>
 	 *
 	 * @param src
 	 */
-	constructor(src:string)
+	constructor(src:string, type:'arraybuffer'|'blob'|'document'|'json'|'text' = null)
 	{
 		this.src = src;
 		this.def = deferred();
+		this.type = type;
 	}
 
 	/**
