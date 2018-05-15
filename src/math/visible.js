@@ -1,0 +1,3 @@
+function visible(rectA, rectB){
+
+}

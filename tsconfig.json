@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
-    "target": "es2017"
-  }
+    "target": "es2017",
+    "outDir": "dist/es2017"
+  },
+  "include": [
+    "src/**/*"
+  ],
 }
